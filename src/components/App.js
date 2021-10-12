@@ -1,12 +1,26 @@
 import AppRouter from "components/Router";
-import { useState } from "react";
+import React, {useState, useEffect} from "react";
 import {authService} from "fbase";
+import {onAuthStateChanged} from "firebase/auth";
 
 function App() {
-  const [isLoggedin, setLoggedin] = useState(authService.currentUser);
+  const [init, setInit] = useState(false);
+  const [isLoggedin, setLoggedin] = useState(false);
+
+  useEffect(() => {
+    authService.onAuthStateChanged((user) => {
+      if (user){
+        setLoggedin(true);
+      } else{
+        setLoggedin(false);
+      }
+      setInit(true);
+    })
+  }, []);
+
   return (
     <div className="App">
-      <AppRouter isLoggedin={isLoggedin}/>
+      {init ? <AppRouter isLoggedin={isLoggedin}/> : "Initializing..."}
     </div>
   );
 }

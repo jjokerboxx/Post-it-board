@@ -6,6 +6,9 @@ const Auth = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [newAccount, setNewAccout] = useState(true);
+    const [error, setError] = useState("");
+
+    const toggleAccount = () => setNewAccout(prev => !prev);
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -19,7 +22,8 @@ const Auth = () => {
             }
             console.log(authData);
         } catch (error) {
-            console.log(error)
+            console.log(error.message);
+            setError(error.message);
         }
         
     }
@@ -47,6 +51,8 @@ const Auth = () => {
             <button>Continue with Goolge</button>
             <button>Continue with Github</button>
         </div>
+        <div> <button onClick={toggleAccount}> {newAccount ? "I already have Account!" : "I want to create new Account!"}</button> </div>
+        {error}
     </div>
 
 </div>)};
