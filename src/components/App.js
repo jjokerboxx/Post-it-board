@@ -1,13 +1,14 @@
-import AppRouter from "components/Router";
+import AppRouter from "components/AppRouter";
 import React, {useState, useEffect} from "react";
 import {authService} from "fbase";
 import {onAuthStateChanged} from "firebase/auth";
 
 function App() {
   const [init, setInit] = useState(false);
-  const [isLoggedin, setLoggedin] = useState(false);
+  const [isLoggedin, setLoggedin] = useState(true);
 
   useEffect(() => {
+    console.log("asdasdasd", isLoggedin, init);
     authService.onAuthStateChanged((user) => {
       if (user){
         setLoggedin(true);
@@ -17,6 +18,8 @@ function App() {
       setInit(true);
     })
   }, []);
+
+  console.log(isLoggedin, init);
 
   return (
     <div className="App">

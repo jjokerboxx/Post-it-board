@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { authService } from "fbase";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
 
 const Auth = () => {
     const [email, setEmail] = useState("");
@@ -25,7 +25,24 @@ const Auth = () => {
             console.log(error.message);
             setError(error.message);
         }
-        
+    }
+    const onGoogleClick = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(authService, provider);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+                // The signed-in user info.
+            const user = result.user;
+
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+        }
     }
 
     const onChange = (e) => {
@@ -48,7 +65,7 @@ const Auth = () => {
             <input type="submit" value={newAccount ? "Create Account" : "Login"}></input>
         </form>
         <div>
-            <button>Continue with Goolge</button>
+            <button onClick={onGoogleClick}>Continue with Goolge</button>
             <button>Continue with Github</button>
         </div>
         <div> <button onClick={toggleAccount}> {newAccount ? "I already have Account!" : "I want to create new Account!"}</button> </div>
