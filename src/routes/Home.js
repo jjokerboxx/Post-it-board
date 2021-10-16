@@ -26,7 +26,7 @@ const Home = () => {
 
   //순서대로 출력 어떻게????
 
-  const renderTweet = async () => {
+  const readTweet = async () => {
     // document.querySelector(".tweet").innerHTML = "";
     const twt = await getDocs(collection(dbService, "Tweet"));
     twt.forEach(elem => {
@@ -42,7 +42,7 @@ const Home = () => {
     //   document.querySelector(".tweet").innerHTML += `<div><p>${element.data().tweet}</p> <p>${Date(element.data().uploadedAt)}</p></div>`;
     // })
   }
-  useEffect(renderTweet, [twtArry]);
+  useEffect(() => {readTweet()}, []);
   return(
     <>
       <div>
@@ -53,7 +53,8 @@ const Home = () => {
       </div>
 
       <div className="tweet">
-        {twtArry.forEach(element =>
+        {/* forEach가 아니라 map!! */}
+        {twtArry.map(element =>
           <div>
             <p>
               {element.tweet}
