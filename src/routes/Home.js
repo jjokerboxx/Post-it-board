@@ -4,17 +4,19 @@ import React, { useState, useEffect } from "react";
 
 const Home = () => {
   const [tweet, setTweet] = useState("");
+  const [twtArry, setTwtArry] = useState([]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const nweet = {
-      tweet: tweet
+      tweet: tweet,
+      uploadedAt: Date.now()
     }
     const docRef = await addDoc(collection(dbService, "Tweet"), nweet);
     console.log("Document written with ID: ", docRef.id);
 
     document.querySelector("#tweet").value = "";
-    renderTweet();
+    // renderTweet();
   }
 
   const onChange = (e) => {
@@ -25,13 +27,22 @@ const Home = () => {
   //순서대로 출력 어떻게????
 
   const renderTweet = async () => {
-    document.querySelector(".tweet").innerHTML = "";
+    // document.querySelector(".tweet").innerHTML = "";
     const twt = await getDocs(collection(dbService, "Tweet"));
-    twt.forEach(element => {
-      document.querySelector(".tweet").innerHTML += `<div><p>${element.data().tweet}</p></div>`;
+    twt.forEach(elem => {
+      const twtObj = {
+        tweet: elem.data().tweet,
+        uploadedAt: Date(elem.data().uploadedAt)
+      }
+      setTwtArry((prev) => [twtObj, ...prev]);
     })
+    // 이렇게 붙일 수도 있지만 매 클릭마다 반목문을 호출하기 보다 배열 티런하는 것이 더 빠른가????
+    // JSX와 forEach 둘 중 어느 코드가 더 효율적인가??
+    // twt.forEach(element => {
+    //   document.querySelector(".tweet").innerHTML += `<div><p>${element.data().tweet}</p> <p>${Date(element.data().uploadedAt)}</p></div>`;
+    // })
   }
-  useEffect(renderTweet);
+  useEffect(renderTweet, [twtArry]);
   return(
     <>
       <div>
@@ -42,6 +53,16 @@ const Home = () => {
       </div>
 
       <div className="tweet">
+        {twtArry.forEach(element =>
+          <div>
+            <p>
+              {element.tweet}
+            </p>
+            <p>
+              {element.uploadedAt}
+            </p>
+          </div>
+        )}
       </div>
 
     </>
