@@ -1,73 +1,109 @@
 import { dbService } from "fbase";
-import { collection, addDoc, getDocs } from "@firebase/firestore";
+import {
+	collection,
+	addDoc,
+	getDocs,
+	onSnapshot,
+	query,
+	orderBy,
+} from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
+import Tweet from "./Tweet";
 
-const Home = () => {
-  const [tweet, setTweet] = useState("");
-  const [twtArry, setTwtArry] = useState([]);
+const Home = ({ userObj }) => {
+	// 0) 상태 모음집
+	const [tweet, setTweet] = useState("");
+	const [twtArry, setTwtArry] = useState([]);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const nweet = {
-      tweet: tweet,
-      uploadedAt: Date.now()
-    }
-    const docRef = await addDoc(collection(dbService, "Tweet"), nweet);
-    console.log("Document written with ID: ", docRef.id);
+	// 2) 트윗 업로드 버튼 함수
+	const onSubmit = async () => {
+		e.preventDefault();
+		const nweet = {
+			// 3) 상태를 객체로 받아와서 파이어스토어에 올리기
+			tweet: tweet,
+			uploadedAt: Date.now(),
+			author: userObj.uid,
+		};
+		const docRef = await addDoc(collection(dbService, "Tweet"), nweet);
+		console.log("Document written with ID: ", docRef.id);
+		// 4) 입력칸 비우기
+		document.querySelector("#tweet").value = "";
+	};
 
-    document.querySelector("#tweet").value = "";
-    // renderTweet();
-  }
+	// 1) 텍스트입력 감지 후 입력값을 상태로 올리기
+	const onChange = (e) => {
+		const {
+			target: { value },
+		} = e;
+		setTweet(value);
+	};
 
-  const onChange = (e) => {
-    const {target:{value}, } = e;
-    setTweet(value);
-  }
+	useEffect(() => {
+		// 실시간 트윗 렌더링
+		const q = query(
+			collection(dbService, "Tweet"),
+			orderBy("uploadedAt", "desc")
+		);
+		// const twt = onSnapshot(q, (doc) => {
+		//   doc.forEach((elem) => {
+		//     const date = new Date(elem.data().uploadedAt);
+		//     const dateString = `${date.getMonth() + 1}. ${date.getDate()}. ${date.getFullYear()} : ${date.getHours()}`
+		//     // 파이어스토어에서 받아온 데이터를 객체로
+		//     const twtObj = {
+		//       tweet: elem.data().tweet,
+		//       uploadedAt: dateString,
+		//       author: elem.data().author,
+		//       id: elem.id
+		//     }
+		//     console.log(elem.id);
+		//     // 객체를 상태로
+		//     setTwtArry((prev) => [twtObj, ...prev]);
+		//   })
+		// })
+		const twt = onSnapshot(q, (doc) => {
+			const docArry = doc.docs.map((elem) => ({ id: elem.id, ...elem.data() }));
+			setTwtArry(docArry);
+			console.log(twtArry);
+		});
+	}, []);
 
-  //순서대로 출력 어떻게????
-
-  const readTweet = async () => {
-    // document.querySelector(".tweet").innerHTML = "";
-    const twt = await getDocs(collection(dbService, "Tweet"));
-    twt.forEach(elem => {
-      const twtObj = {
-        tweet: elem.data().tweet,
-        uploadedAt: Date(elem.data().uploadedAt)
-      }
-      setTwtArry((prev) => [twtObj, ...prev]);
-    })
-    // 이렇게 붙일 수도 있지만 매 클릭마다 반목문을 호출하기 보다 배열 티런하는 것이 더 빠른가????
-    // JSX와 forEach 둘 중 어느 코드가 더 효율적인가??
-    // twt.forEach(element => {
-    //   document.querySelector(".tweet").innerHTML += `<div><p>${element.data().tweet}</p> <p>${Date(element.data().uploadedAt)}</p></div>`;
-    // })
-  }
-  useEffect(() => {readTweet()}, []);
-  return(
-    <>
-      <div>
-        <form>
-          <input type="text" id="tweet" value={tweet} onChange={onChange} placeholder="What's on your mind?" maxLength={120}></input>
-          <button onClick={onSubmit}>Nweet!</button>
-        </form>
-      </div>
-
-      <div className="tweet">
-        {/* forEach가 아니라 map!! */}
-        {twtArry.map(element =>
-          <div>
-            <p>
-              {element.tweet}
-            </p>
-            <p>
-              {element.uploadedAt}
-            </p>
-          </div>
-        )}
-      </div>
-
-    </>
-  )
+	return (
+		<>
+			<div>
+				<form>
+					<input
+						type='text'
+						id='tweet'
+						value={tweet}
+						onChange={onChange}
+						placeholder="What's on your mind?"
+						maxLength={120}></input>
+					<button onClick={onSubmit}>Nweet!</button>
+				</form>
+			</div>
+			<div className='tweet'>
+				{/* forEach가 아니라 map!! */}
+				{/* 상태를 JSX 반복문으로 렌더 */}
+				{twtArry.map(
+					(element) => (
+						<Tweet
+							key={element.id}
+							tweetObj={element}
+							isOwner={userObj.uid === element.author}
+						/>
+					)
+					// <div>
+					//   <p>
+					//     {element.tweet}
+					//   </p>
+					//   <p>
+					//     {element.uploadedAt}
+					//   </p>
+					// </div>
+				)}
+			</div>
+		</>
+	);
 };
 
 export default Home;

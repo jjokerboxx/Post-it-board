@@ -6,12 +6,14 @@ import {onAuthStateChanged} from "firebase/auth";
 function App() {
   const [init, setInit] = useState(false);
   const [isLoggedin, setLoggedin] = useState(true);
+  const [userObj, setUserObj] = useState(null);
 
   useEffect(() => {
     console.log("asdasdasd", isLoggedin, init);
     authService.onAuthStateChanged((user) => {
       if (user){
         setLoggedin(true);
+        setUserObj(user);
       } else{
         setLoggedin(false);
       }
@@ -23,7 +25,7 @@ function App() {
 
   return (
     <div className="App">
-      {init ? <AppRouter isLoggedin={isLoggedin}/> : "Initializing..."}
+      {init ? <AppRouter isLoggedin={isLoggedin} userObj={userObj}/> : "Initializing..."}
     </div>
   );
 }
