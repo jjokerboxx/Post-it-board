@@ -12,14 +12,18 @@ const Tweet = ({ tweetObj, isOwner }) => {
 		await updateDoc(doc(dbService, "Tweet", tweetObj.id));
 		console.log("update doc", tweetObj.id);
 	};
-	
+
+	const date = new Date(tweetObj.uploadedAt);
+	const dataString = `${
+		date.getMonth() + 1
+	}, ${date.getDate()}, ${date.getFullYear()}`;
 	return (
 		<>
 			<div id={tweetObj.id}>
 				<span>{tweetObj.tweet}</span>
 			</div>
 			<div>
-				<span>{tweetObj.uploadedAt}</span>
+				<span>{dataString}</span>
 			</div>
 
 			{isOwner && (

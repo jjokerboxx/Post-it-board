@@ -16,7 +16,7 @@ const Home = ({ userObj }) => {
 	const [twtArry, setTwtArry] = useState([]);
 
 	// 2) 트윗 업로드 버튼 함수
-	const onSubmit = async () => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
 		const nweet = {
 			// 3) 상태를 객체로 받아와서 파이어스토어에 올리기
@@ -72,7 +72,19 @@ const Home = ({ userObj }) => {
 			<div>
 				<form>
 					<input
-						type='text'
+						// enableLimit={true}
+						multiLine={true}
+						focused={false}
+						style={{
+							backgroundColor: "tomato",
+							border: "none",
+							outlineStyle: "none",
+							width: 100,
+							height: 246,
+						}}
+						cols='30'
+						rows='5'
+						type='textarea'
 						id='tweet'
 						value={tweet}
 						onChange={onChange}
