@@ -19,19 +19,42 @@ const Tweet = ({ tweetObj, isOwner }) => {
 	}, ${date.getDate()}, ${date.getFullYear()}`;
 	return (
 		<>
-			<div id={tweetObj.id}>
-				<span>{tweetObj.tweet}</span>
-			</div>
-			<div>
-				<span>{dataString}</span>
-			</div>
+			<div
+				style={{
+					wordWrap: "break-word",
+					backgroundColor: tweetObj.color,
+					border: "none",
+					borderRadius: (20, 20, 10, 10),
+					padding: 10,
+					margin: 20,
+					outlineStyle: "none",
+					resize: "none",
+					width: 250,
+					height: 150,
+				}}>
+				{isOwner && (
+					<>
+						<div>
+							<button
+								style={{
+									marginBottom: 5,
+									float: "right",
+									border: "none",
+									backgroundColor: tweetObj.color,
+									color: "white",
+								}}
+								onClick={deleteTweet}>
+								✖
+							</button>
+						</div>
 
-			{isOwner && (
-				<>
-					<button onClick={deleteTweet}>Delete</button>
-					<button onClick={updateTweet}>Edit</button>
-				</>
-			)}
+						{/* <button onClick={updateTweet}>Edit</button> */}
+					</>
+				)}
+				<div id={tweetObj.id}>
+					<span>{tweetObj.tweet}</span>
+				</div>
+			</div>
 		</>
 	);
 };

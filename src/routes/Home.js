@@ -18,11 +18,13 @@ const Home = ({ userObj }) => {
 	// 2) 트윗 업로드 버튼 함수
 	const onSubmit = async (e) => {
 		e.preventDefault();
+		const postIt = document.querySelector("#tweet");
 		const nweet = {
 			// 3) 상태를 객체로 받아와서 파이어스토어에 올리기
 			tweet: tweet,
 			uploadedAt: Date.now(),
 			author: userObj.uid,
+			color: postIt.style.backgroundColor,
 		};
 		const docRef = await addDoc(collection(dbService, "Tweet"), nweet);
 		console.log("Document written with ID: ", docRef.id);
@@ -44,22 +46,6 @@ const Home = ({ userObj }) => {
 			collection(dbService, "Tweet"),
 			orderBy("uploadedAt", "desc")
 		);
-		// const twt = onSnapshot(q, (doc) => {
-		//   doc.forEach((elem) => {
-		//     const date = new Date(elem.data().uploadedAt);
-		//     const dateString = `${date.getMonth() + 1}. ${date.getDate()}. ${date.getFullYear()} : ${date.getHours()}`
-		//     // 파이어스토어에서 받아온 데이터를 객체로
-		//     const twtObj = {
-		//       tweet: elem.data().tweet,
-		//       uploadedAt: dateString,
-		//       author: elem.data().author,
-		//       id: elem.id
-		//     }
-		//     console.log(elem.id);
-		//     // 객체를 상태로
-		//     setTwtArry((prev) => [twtObj, ...prev]);
-		//   })
-		// })
 		const twt = onSnapshot(q, (doc) => {
 			const docArry = doc.docs.map((elem) => ({ id: elem.id, ...elem.data() }));
 			setTwtArry(docArry);
@@ -69,52 +55,126 @@ const Home = ({ userObj }) => {
 
 	return (
 		<>
-			<div>
-				<form>
-					<input
-						// enableLimit={true}
-						multiLine={true}
-						focused={false}
+			<div
+				className='flex-container'
+				style={{ display: "flex", flex: 1, flexDirection: "row" }}>
+				<div style={{ flex: 1, margin: 30 }}>
+					<form
 						style={{
-							backgroundColor: "tomato",
-							border: "none",
-							outlineStyle: "none",
-							width: 100,
-							height: 246,
-						}}
-						cols='30'
-						rows='5'
-						type='textarea'
-						id='tweet'
-						value={tweet}
-						onChange={onChange}
-						placeholder="What's on your mind?"
-						maxLength={120}></input>
-					<button onClick={onSubmit}>Nweet!</button>
-				</form>
-			</div>
-			<div className='tweet'>
-				{/* forEach가 아니라 map!! */}
-				{/* 상태를 JSX 반복문으로 렌더 */}
-				{twtArry.map(
-					(element) => (
+							display: "flex",
+							flexDirection: "column",
+							justifyContent: "center",
+							alignItems: "center",
+						}}>
+						<div
+							className='post-it'
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								backgroundColor: "#ffd359",
+								borderRadius: (20, 20, 10, 10),
+								width: 270,
+								height: 170,
+							}}>
+							<textarea
+								// enableLimit={true}
+								style={{
+									backgroundColor: "#ffd359",
+									border: "none",
+									borderRadius: (20, 20, 10, 10),
+									padding: 10,
+									outlineStyle: "none",
+									resize: "none",
+								}}
+								cols={30}
+								rows={7}
+								id='tweet'
+								value={tweet}
+								onChange={onChange}
+								placeholder="What's on your mind?"
+								maxLength={100}></textarea>
+							<div
+								className='color-palette'
+								style={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									backgroundColor: "#fffafa",
+									overflow: "visible",
+									borderRadius: 20,
+									marginLeft: 20,
+									marginRight: 20,
+									boxShadow: "1px 3px 1px #f0f0f0",
+								}}>
+								<ColorButton color='#ffd359' />
+								<ColorButton color='#e2ff3d' />
+								<ColorButton color='#ff8547' />
+								<ColorButton color='#44ccff' />
+								<ColorButton color='#ff8adc' />
+							</div>
+						</div>
+						<button
+							style={{
+								width: 100,
+								border: "none",
+								color: "white",
+								backgroundColor: "#3f7bf2",
+								padding: 5,
+								borderRadius: 10,
+								margin: 10,
+							}}
+							onClick={onSubmit}>
+							Post!
+						</button>
+					</form>
+				</div>
+				<div className='tweet' style={{ flex: 3 }}>
+					{/* 상태를 JSX 반복문으로 렌더 */}
+					{twtArry.map((element) => (
 						<Tweet
 							key={element.id}
 							tweetObj={element}
 							isOwner={userObj.uid === element.author}
 						/>
-					)
-					// <div>
-					//   <p>
-					//     {element.tweet}
-					//   </p>
-					//   <p>
-					//     {element.uploadedAt}
-					//   </p>
-					// </div>
-				)}
+					))}
+				</div>
 			</div>
 		</>
+	);
+};
+
+const ColorButton = ({ color }) => {
+	// 포스트잇 색상 변경
+	const onColorClick = (e) => {
+		const {
+			target: { id },
+		} = e;
+
+		const clicked = document.querySelector("#tweet");
+		const clickedPostIt = document.querySelector(".post-it");
+
+		clicked.animate(
+			{ backgroundColor: id },
+			{ duration: 400, fill: "forwards" }
+		);
+		clickedPostIt.animate(
+			{ backgroundColor: id },
+			{ duration: 400, fill: "forwards" }
+		);
+	};
+	return (
+		<div
+			id={color}
+			style={{
+				display: "block",
+				backgroundColor: color,
+				borderRadius: 50,
+				margin: 5,
+				height: 15,
+				width: 15,
+				boxShadow: "1px 3px 1px #f0f0f0",
+			}}
+			onClick={onColorClick}></div>
 	);
 };
 
