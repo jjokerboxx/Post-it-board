@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { dbService } from "fbase";
+import { dbService } from "firebase";
 import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
 
-const Tweet = ({ tweetObj, isOwner }) => {
-	const deleteTweet = async () => {
-		await deleteDoc(doc(dbService, "Tweet", tweetObj.id));
-		console.log("delete doc", tweetObj.id);
+const PostIt = ({ postObj, isOwner }) => {
+	const deletePost = async () => {
+		await deleteDoc(doc(dbService, "Post", postObj.id));
+		console.log("delete doc", postObj.id);
 	};
 
-	const updateTweet = async () => {
-		await updateDoc(doc(dbService, "Tweet", tweetObj.id));
-		console.log("update doc", tweetObj.id);
+	const updatePost = async () => {
+		await updateDoc(doc(dbService, "Post", postObj.id));
+		console.log("update doc", postObj.id);
 	};
 
-	const date = new Date(tweetObj.uploadedAt);
+	const date = new Date(postObj.uploadedAt);
 	const dataString = `${
 		date.getMonth() + 1
 	}, ${date.getDate()}, ${date.getFullYear()}`;
@@ -22,7 +22,7 @@ const Tweet = ({ tweetObj, isOwner }) => {
 			<div
 				style={{
 					wordWrap: "break-word",
-					backgroundColor: tweetObj.color,
+					backgroundColor: postObj.color,
 					border: "none",
 					borderRadius: (20, 20, 10, 10),
 					padding: 10,
@@ -40,23 +40,21 @@ const Tweet = ({ tweetObj, isOwner }) => {
 									marginBottom: 5,
 									float: "right",
 									border: "none",
-									backgroundColor: tweetObj.color,
+									backgroundColor: postObj.color,
 									color: "white",
 								}}
-								onClick={deleteTweet}>
+								onClick={deletePost}>
 								✖
 							</button>
 						</div>
-
-						{/* <button onClick={updateTweet}>Edit</button> */}
 					</>
 				)}
-				<div id={tweetObj.id}>
-					<span>{tweetObj.tweet}</span>
+				<div id={postObj.id}>
+					<span>{postObj.contents}</span>
 				</div>
 			</div>
 		</>
 	);
 };
 
-export default Tweet;
+export default PostIt;

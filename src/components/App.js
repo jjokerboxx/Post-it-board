@@ -1,6 +1,6 @@
 import AppRouter from "components/AppRouter";
 import React, { useState, useEffect } from "react";
-import { authService } from "fbase";
+import { authService } from "firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
 			{init ? (
 				<AppRouter isLoggedin={isLoggedin} userObj={userObj} />
 			) : (
-				"Initializing..."
+				"불러오는 중..."
 			)}
 		</div>
 	);

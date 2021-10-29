@@ -1,4 +1,4 @@
-import { dbService } from "fbase";
+import { dbService } from "firebase";
 import {
 	collection,
 	addDoc,
@@ -8,28 +8,29 @@ import {
 	orderBy,
 } from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
-import Tweet from "./Tweet";
+import PostIt from "./PostIt";
 
 const Home = ({ userObj }) => {
 	// 0) 상태 모음집
-	const [tweet, setTweet] = useState("");
-	const [twtArry, setTwtArry] = useState([]);
+	const [post, setPost] = useState("");
+	const [postArry, setPostArry] = useState([]);
 
 	// 2) 트윗 업로드 버튼 함수
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		const postIt = document.querySelector("#tweet");
-		const nweet = {
+		const $post = document.querySelector("#post");
+		console.log("color: ", $post.style.backgroundColor);
+		const postObj = {
 			// 3) 상태를 객체로 받아와서 파이어스토어에 올리기
-			tweet: tweet,
+			contents: post,
 			uploadedAt: Date.now(),
 			author: userObj.uid,
-			color: postIt.style.backgroundColor,
+			color: $post.style.backgroundColor,
 		};
-		const docRef = await addDoc(collection(dbService, "Tweet"), nweet);
+		const docRef = await addDoc(collection(dbService, "Post"), postObj);
 		console.log("Document written with ID: ", docRef.id);
 		// 4) 입력칸 비우기
-		document.querySelector("#tweet").value = "";
+		document.querySelector("#post").value = "";
 	};
 
 	// 1) 텍스트입력 감지 후 입력값을 상태로 올리기
@@ -37,19 +38,19 @@ const Home = ({ userObj }) => {
 		const {
 			target: { value },
 		} = e;
-		setTweet(value);
+		setPost(value);
 	};
 
 	useEffect(() => {
 		// 실시간 트윗 렌더링
 		const q = query(
-			collection(dbService, "Tweet"),
+			collection(dbService, "Post"),
 			orderBy("uploadedAt", "desc")
 		);
-		const twt = onSnapshot(q, (doc) => {
+		const postSnapshot = onSnapshot(q, (doc) => {
 			const docArry = doc.docs.map((elem) => ({ id: elem.id, ...elem.data() }));
-			setTwtArry(docArry);
-			console.log(twtArry);
+			setPostArry(docArry);
+			console.log(postArry);
 		});
 	}, []);
 
@@ -77,7 +78,6 @@ const Home = ({ userObj }) => {
 								height: 170,
 							}}>
 							<textarea
-								// enableLimit={true}
 								style={{
 									backgroundColor: "#ffd359",
 									border: "none",
@@ -88,8 +88,8 @@ const Home = ({ userObj }) => {
 								}}
 								cols={30}
 								rows={7}
-								id='tweet'
-								value={tweet}
+								id='post'
+								value={post}
 								onChange={onChange}
 								placeholder="What's on your mind?"
 								maxLength={100}></textarea>
@@ -128,12 +128,12 @@ const Home = ({ userObj }) => {
 						</button>
 					</form>
 				</div>
-				<div className='tweet' style={{ flex: 3 }}>
+				<div className='post-div' style={{ flex: 3 }}>
 					{/* 상태를 JSX 반복문으로 렌더 */}
-					{twtArry.map((element) => (
-						<Tweet
+					{postArry.map((element) => (
+						<PostIt
 							key={element.id}
-							tweetObj={element}
+							postObj={element}
 							isOwner={userObj.uid === element.author}
 						/>
 					))}
@@ -150,7 +150,7 @@ const ColorButton = ({ color }) => {
 			target: { id },
 		} = e;
 
-		const clicked = document.querySelector("#tweet");
+		const clicked = document.querySelector("#post");
 		const clickedPostIt = document.querySelector(".post-it");
 
 		clicked.animate(
