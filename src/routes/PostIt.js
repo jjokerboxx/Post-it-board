@@ -8,9 +8,12 @@ const PostIt = ({ postObj, isOwner }) => {
 		console.log("delete doc", postObj.id);
 	};
 
-	const updatePost = async () => {
-		await updateDoc(doc(dbService, "Post", postObj.id));
-		console.log("update doc", postObj.id);
+	const likePost = async () => {
+		const postDoc = doc(dbService, "Post", postObj.id);
+		await updateDoc(postDoc, {
+			like: postObj.like + 1,
+		});
+		console.log("like doc", postObj.id);
 	};
 
 	const date = new Date(postObj.uploadedAt);
@@ -52,6 +55,22 @@ const PostIt = ({ postObj, isOwner }) => {
 				<div id={postObj.id}>
 					<span>{postObj.contents}</span>
 				</div>
+				<>
+					<div>
+						<button
+							style={{
+								marginBottom: 5,
+								float: "right",
+								border: "none",
+								backgroundColor: postObj.color,
+								color: "white",
+							}}
+							onClick={likePost}>
+							👍🏻
+							{postObj.like != 0 && postObj.like}
+						</button>
+					</div>
+				</>
 			</div>
 		</>
 	);

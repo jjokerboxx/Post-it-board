@@ -7,30 +7,33 @@ import {
 	query,
 	orderBy,
 } from "@firebase/firestore";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PostIt from "./PostIt";
 
 const Home = ({ userObj }) => {
 	// 0) 상태 모음집
 	const [post, setPost] = useState("");
 	const [postArry, setPostArry] = useState([]);
+	const [isSorted, setIsSorted] = useState(false);
 
 	// 2) 트윗 업로드 버튼 함수
 	const onSubmit = async (e) => {
+		setIsSorted((prev) => prev);
 		e.preventDefault();
-		const $post = document.querySelector("#post");
-		console.log("color: ", $post.style.backgroundColor);
+		const $post = document.querySelector(".post-it");
 		const postObj = {
 			// 3) 상태를 객체로 받아와서 파이어스토어에 올리기
 			contents: post,
 			uploadedAt: Date.now(),
 			author: userObj.uid,
 			color: $post.style.backgroundColor,
+			like: 0,
 		};
 		const docRef = await addDoc(collection(dbService, "Post"), postObj);
 		console.log("Document written with ID: ", docRef.id);
 		// 4) 입력칸 비우기
 		document.querySelector("#post").value = "";
+		setPost("");
 	};
 
 	// 1) 텍스트입력 감지 후 입력값을 상태로 올리기
@@ -41,21 +44,28 @@ const Home = ({ userObj }) => {
 		setPost(value);
 	};
 
+	const onSortClick = () => {
+		setIsSorted((prev) => !prev);
+	};
+
 	useEffect(() => {
 		// 실시간 트윗 렌더링
-		const q = query(
-			collection(dbService, "Post"),
-			orderBy("uploadedAt", "desc")
-		);
-		const postSnapshot = onSnapshot(q, (doc) => {
-			const docArry = doc.docs.map((elem) => ({ id: elem.id, ...elem.data() }));
+		const sortOrder = isSorted ? "like" : "uploadedAt";
+		console.log(sortOrder);
+		const q = query(collection(dbService, "Post"), orderBy(sortOrder, "desc"));
+		// onSnapshot 때 자동으로 정렬되는 문제 해결...
+		const postSnapshot = onSnapshot(q, (snapshot) => {
+			const docArry = snapshot.docs.map((elem) => ({
+				id: elem.id,
+				...elem.data(),
+			}));
 			setPostArry(docArry);
-			console.log(postArry);
 		});
-	}, []);
-
+		console.log("isSorted", isSorted);
+	}, [isSorted]);
 	return (
 		<>
+			<button onClick={onSortClick}>Sort</button>
 			<div
 				className='flex-container'
 				style={{ display: "flex", flex: 1, flexDirection: "row" }}>
@@ -149,18 +159,21 @@ const ColorButton = ({ color }) => {
 		const {
 			target: { id },
 		} = e;
+		const $clickedPost = document.querySelector("#post");
+		const $clickedPostIt = document.querySelector(".post-it");
 
-		const clicked = document.querySelector("#post");
-		const clickedPostIt = document.querySelector(".post-it");
-
-		clicked.animate(
+		$clickedPost.animate(
 			{ backgroundColor: id },
 			{ duration: 400, fill: "forwards" }
 		);
-		clickedPostIt.animate(
+		$clickedPostIt.animate(
 			{ backgroundColor: id },
 			{ duration: 400, fill: "forwards" }
 		);
+		setTimeout(() => {
+			$clickedPost.style.backgroundColor = id;
+			$clickedPostIt.style.backgroundColor = id;
+		}, 100);
 	};
 	return (
 		<div
