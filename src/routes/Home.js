@@ -1,4 +1,4 @@
-import { dbService } from "firebase";
+import { firestoreDB } from "firebase";
 import {
 	collection,
 	addDoc,
@@ -12,35 +12,12 @@ import PostIt from "./PostIt";
 import "../styles/App.css";
 
 const Home = ({ userObj }) => {
-	// 0) 상태 모음집
+	// 0) 상태 모음
 	const [post, setPost] = useState("");
 	const [postArry, setPostArry] = useState([]);
 	const [isSorted, setIsSorted] = useState(false);
 
-	// 2)  업로드 버튼 함수
-	const onSubmit = async (e) => {
-		setIsSorted((prev) => prev);
-		e.preventDefault();
-		const $post = document.querySelector(".postIt");
-		const {
-			style: { backgroundColor },
-		} = $post;
-		const postObj = {
-			// 3) 상태를 객체로 받아와서 firestore에 올리기
-			contents: post,
-			uploadedAt: Date.now(),
-			author: userObj.uid,
-			color: backgroundColor,
-			like: 0,
-		};
-		const docRef = await addDoc(collection(dbService, "Post"), postObj);
-		console.log("Document written with ID: ", docRef.id);
-		// 4) 입력칸 비우기
-		document.querySelector(".post").value = "";
-		setPost("");
-	};
-
-	// 1) 텍스트입력 감지 후 입력값을 상태로 올리기
+	// 1) 텍스트입력 감지 후 입력값(value)을 [post]로 올리기
 	const onChange = (e) => {
 		const {
 			target: { value },
@@ -48,16 +25,42 @@ const Home = ({ userObj }) => {
 		setPost(value);
 	};
 
+	// 2) 업로드
+	const onSubmit = async (e) => {
+		// e.preventDefault();
+		const $postIt = document.querySelector(".postIt");
+		const postObj = {
+			// 상태를 객체로 받아와서 firestore에 올리기
+			contents: post,
+			uploadedAt: Date.now(),
+			author: userObj.uid,
+			color: $postIt.style.backgroundColor,
+			like: 0,
+		};
+		const docRef = await addDoc(collection(firestoreDB, "Post"), postObj);
+		console.log("Document written with ID: ", docRef.id);
+		// 입력칸 비우기
+		document.querySelector(".post").value = "";
+		setPost("");
+	};
+
+	// 3) isSorted를 true || false로 교체
 	const onSortClick = () => {
 		setIsSorted((prev) => !prev);
 	};
 
+	// 4) 실시간 snapshot 렌더링
 	useEffect(() => {
-		// 실시간 snapshot 렌더링
-		const sortOrder = isSorted ? "like" : "uploadedAt";
+		// 정렬 기준
+		const sortOrder = isSorted ? "uploadedAt" : "like";
 		console.log(sortOrder);
-		const q = query(collection(dbService, "Post"), orderBy(sortOrder, "desc"));
-		// onSnapshot 때 자동으로 정렬되는 문제 해결...
+		// 쿼리문 생성
+		const q = query(
+			collection(firestoreDB, "Post"),
+			// ++만약 좋아요가 같으면 uploadedAt 순으로 정렬 기능 추가
+			orderBy(sortOrder, "desc")
+		);
+		// onSnapshot으로 [postArry] 설정
 		const postSnapshot = onSnapshot(q, (snapshot) => {
 			const docArry = snapshot.docs.map((elem) => ({
 				id: elem.id,
@@ -66,11 +69,35 @@ const Home = ({ userObj }) => {
 			setPostArry(docArry);
 		});
 		console.log("isSorted", isSorted);
+		// deps로 isSorted 받기
 	}, [isSorted]);
+
+	// const postGetter = async () => {
+	// 	// 정렬 기준
+	// 	const sortOrder = isSorted ? "like" : "uploadedAt";
+	// 	console.log(sortOrder);
+	// 	// 쿼리문 생성
+	// 	const q = query(
+	// 		collection(firestoreDB, "Post"),
+	// 		// ++만약 좋아요가 같으면 uploadedAt 순으로 정렬 기능 추가
+	// 		orderBy(sortOrder, "desc")
+	// 	);
+	// 	// onSnapshot으로 [postArry] 설정
+	// 	const postDocs = await getDocs(q);
+	// 	postDocs.forEach((post) => {
+	// 		setPostArry((prev) => [post.data(), ...prev]);
+	// 	});
+	// };
+	// useEffect(() => {
+	// 	// deps로 isSorted 받기
+	// 	postGetter();
+	// }, [isSorted]);
+
+	// 렌더링
 	return (
 		<>
 			<button className='defaultButton' onClick={onSortClick}>
-				Sort
+				Sort by {isSorted ? "Like" : "Time"}
 			</button>
 			<div className='flexContainer'>
 				<div style={{ flex: 1, margin: 30 }}>
@@ -97,6 +124,7 @@ const Home = ({ userObj }) => {
 						</button>
 					</form>
 				</div>
+				{/* JSX [postArry] 렌더링 */}
 				<div className='postDiv' style={{ flex: 3 }}>
 					{postArry.map((element) => (
 						<PostIt

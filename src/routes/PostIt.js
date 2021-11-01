@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { dbService } from "firebase";
+import { firestoreDB } from "firebase";
 import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
 
 const PostIt = ({ postObj, isOwner }) => {
 	const deletePost = async () => {
-		await deleteDoc(doc(dbService, "Post", postObj.id));
+		await deleteDoc(doc(firestoreDB, "Post", postObj.id));
 		console.log("delete doc", postObj.id);
 	};
 
 	const likePost = async () => {
-		const postDoc = doc(dbService, "Post", postObj.id);
+		const postDoc = doc(firestoreDB, "Post", postObj.id);
 		await updateDoc(postDoc, {
 			like: postObj.like + 1,
 		});
@@ -67,7 +67,7 @@ const PostIt = ({ postObj, isOwner }) => {
 							}}
 							onClick={likePost}>
 							👍🏻
-							{postObj.like != 0 && postObj.like}
+							<b>{postObj.like != 0 && postObj.like}</b>
 						</button>
 					</div>
 				</>
