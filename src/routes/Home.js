@@ -27,7 +27,7 @@ const Home = ({ userObj }) => {
 
 	// 2) 업로드
 	const onSubmit = async (e) => {
-		// e.preventDefault();
+		e.preventDefault();
 		const $postIt = document.querySelector(".postIt");
 		const postObj = {
 			// 상태를 객체로 받아와서 firestore에 올리기
@@ -47,12 +47,13 @@ const Home = ({ userObj }) => {
 	// 3) isSorted를 true || false로 교체
 	const onSortClick = () => {
 		setIsSorted((prev) => !prev);
+		console.log(isSorted);
 	};
 
 	// 4) 실시간 snapshot 렌더링
 	useEffect(() => {
 		// 정렬 기준
-		const sortOrder = isSorted ? "uploadedAt" : "like";
+		const sortOrder = "uploadedAt";
 		console.log(sortOrder);
 		// 쿼리문 생성
 		const q = query(
@@ -97,7 +98,7 @@ const Home = ({ userObj }) => {
 	return (
 		<>
 			<button className='defaultButton' onClick={onSortClick}>
-				Sort by {isSorted ? "Like" : "Time"}
+				Sort by {isSorted ? "Time" : "Like"}
 			</button>
 			<div className='flexContainer'>
 				<div style={{ flex: 1, margin: 30 }}>
@@ -126,13 +127,25 @@ const Home = ({ userObj }) => {
 				</div>
 				{/* JSX [postArry] 렌더링 */}
 				<div className='postDiv' style={{ flex: 3 }}>
-					{postArry.map((element) => (
-						<PostIt
-							key={element.id}
-							postObj={element}
-							isOwner={userObj.uid === element.author}
-						/>
-					))}
+					{isSorted
+						? postArry
+								.sort((a, b) => b.like - a.like)
+								.map((element) => (
+									<PostIt
+										key={element.id}
+										postObj={element}
+										isOwner={userObj.uid === element.author}
+									/>
+								))
+						: postArry
+								.sort((a, b) => b.uploadedAt - a.uploadedAt)
+								.map((element) => (
+									<PostIt
+										key={element.id}
+										postObj={element}
+										isOwner={userObj.uid === element.author}
+									/>
+								))}
 				</div>
 			</div>
 		</>
