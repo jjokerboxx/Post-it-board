@@ -15,3 +15,4 @@
 
 ### 3. Upload Interaction
 - To be updated
+### 4. Firebase 구글 로그인 기능
