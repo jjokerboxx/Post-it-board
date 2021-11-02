@@ -6,7 +6,7 @@
 
 기술 스택 : React.js, Firebase, CSS, Framer
 
-###구현기능
+### 구현기능
 #### 1. Color Transition Button
 ![ColorTransition](https://user-images.githubusercontent.com/28983322/139691337-45607bd7-3ed8-4ca8-94ef-d0a4e063c46c.gif)
 
