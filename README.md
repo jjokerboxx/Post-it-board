@@ -1,10 +1,9 @@
 
 ## 포스트잇 게시판
 ### [토스 디자인 컨퍼런스 영상 참고](https://www.youtube.com/watch?v=_aCtdniDpT0&list=PL1DJtS1Hv1PgAekdTPF0lKtfsqAis3HXR&index=14&ab_channel=%ED%86%A0%EC%8A%A4)
+- 누구나 자유롭게 자신의 의견을 알록달록한 포스트잇으로 올려보는 "포스트잇 게시판"
 - Interactive Frontend Design
-
-
-기술 스택 : React.js, Firebase, CSS, Framer
+- 기술 스택 : React.js, Firebase, CSS, Framer
 
 ### 구현기능
 #### 1. Color Transition Button
@@ -14,5 +13,9 @@
 ![Sorting](https://user-images.githubusercontent.com/28983322/139691356-9ecef300-68e3-477d-959b-7e3178c5d83c.gif)
 
 ### 3. Upload Interaction
-- To be updated
-### 4. Firebase 구글 로그인 기능
+
+![Upload](https://user-images.githubusercontent.com/28983322/140072417-d77e0dc3-5e61-4e4a-a7cb-2df48a3a0820.gif)
+
+
+### 4. Delete motion
+- To be Updated
