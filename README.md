@@ -1,5 +1,5 @@
 
-## 포스트잇 게시판
+## [포스트잇 게시판](https://github.com/kylelee-js/Post-it-board)
 ### [토스 디자인 컨퍼런스 영상 참고](https://www.youtube.com/watch?v=_aCtdniDpT0&list=PL1DJtS1Hv1PgAekdTPF0lKtfsqAis3HXR&index=14&ab_channel=%ED%86%A0%EC%8A%A4)
 - 누구나 자유롭게 자신의 의견을 알록달록한 포스트잇으로 올려보는 "포스트잇 게시판"
 - Interactive Frontend Design
