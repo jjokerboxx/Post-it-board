@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "https://kylelee-js.github.io/Post-it-board/static/css/main.4aa79c80.chunk.css",
+    "main.js": "https://kylelee-js.github.io/Post-it-board/static/js/main.d0d5a949.chunk.js",
+    "main.js.map": "https://kylelee-js.github.io/Post-it-board/static/js/main.d0d5a949.chunk.js.map",
+    "runtime-main.js": "https://kylelee-js.github.io/Post-it-board/static/js/runtime-main.9167ae7a.js",
+    "runtime-main.js.map": "https://kylelee-js.github.io/Post-it-board/static/js/runtime-main.9167ae7a.js.map",
+    "static/js/2.1f9b7e8b.chunk.js": "https://kylelee-js.github.io/Post-it-board/static/js/2.1f9b7e8b.chunk.js",
+    "static/js/2.1f9b7e8b.chunk.js.map": "https://kylelee-js.github.io/Post-it-board/static/js/2.1f9b7e8b.chunk.js.map",
+    "index.html": "https://kylelee-js.github.io/Post-it-board/index.html",
+    "static/css/main.4aa79c80.chunk.css.map": "https://kylelee-js.github.io/Post-it-board/static/css/main.4aa79c80.chunk.css.map",
+    "static/js/2.1f9b7e8b.chunk.js.LICENSE.txt": "https://kylelee-js.github.io/Post-it-board/static/js/2.1f9b7e8b.chunk.js.LICENSE.txt",
+    "static/media/App.css": "https://kylelee-js.github.io/Post-it-board/static/media/SpoqaHanSansNeo-Thin.4abb192e.ttf"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9167ae7a.js",
+    "static/js/2.1f9b7e8b.chunk.js",
+    "static/css/main.4aa79c80.chunk.css",
+    "static/js/main.d0d5a949.chunk.js"
+  ]
+}
