@@ -1,8 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+const Nav = styled.ul`
+  display: flex;
+`;
 
 const Navigation = () => {
-  return(
+  return (
     <nav>
       <ul>
         <li>
@@ -13,7 +18,7 @@ const Navigation = () => {
         </li>
       </ul>
     </nav>
-  )
+  );
 };
-    
+
 export default Navigation;
