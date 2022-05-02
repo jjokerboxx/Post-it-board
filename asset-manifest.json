@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "https://kylelee-js.github.io/Post-it-board/static/css/main.95fc6349.chunk.css",
-    "main.js": "https://kylelee-js.github.io/Post-it-board/static/js/main.f8f480ff.chunk.js",
-    "main.js.map": "https://kylelee-js.github.io/Post-it-board/static/js/main.f8f480ff.chunk.js.map",
-    "runtime-main.js": "https://kylelee-js.github.io/Post-it-board/static/js/runtime-main.9167ae7a.js",
-    "runtime-main.js.map": "https://kylelee-js.github.io/Post-it-board/static/js/runtime-main.9167ae7a.js.map",
-    "static/js/2.241739ec.chunk.js": "https://kylelee-js.github.io/Post-it-board/static/js/2.241739ec.chunk.js",
-    "static/js/2.241739ec.chunk.js.map": "https://kylelee-js.github.io/Post-it-board/static/js/2.241739ec.chunk.js.map",
-    "index.html": "https://kylelee-js.github.io/Post-it-board/index.html",
-    "static/css/main.95fc6349.chunk.css.map": "https://kylelee-js.github.io/Post-it-board/static/css/main.95fc6349.chunk.css.map",
-    "static/js/2.241739ec.chunk.js.LICENSE.txt": "https://kylelee-js.github.io/Post-it-board/static/js/2.241739ec.chunk.js.LICENSE.txt",
-    "static/media/App.css": "https://kylelee-js.github.io/Post-it-board/static/media/SpoqaHanSansNeo-Thin.4abb192e.ttf"
+    "main.css": "/Post-it-board/static/css/main.83a38727.chunk.css",
+    "main.js": "/Post-it-board/static/js/main.27463a1c.chunk.js",
+    "main.js.map": "/Post-it-board/static/js/main.27463a1c.chunk.js.map",
+    "runtime-main.js": "/Post-it-board/static/js/runtime-main.999094bc.js",
+    "runtime-main.js.map": "/Post-it-board/static/js/runtime-main.999094bc.js.map",
+    "static/js/2.d47078a8.chunk.js": "/Post-it-board/static/js/2.d47078a8.chunk.js",
+    "static/js/2.d47078a8.chunk.js.map": "/Post-it-board/static/js/2.d47078a8.chunk.js.map",
+    "index.html": "/Post-it-board/index.html",
+    "static/css/main.83a38727.chunk.css.map": "/Post-it-board/static/css/main.83a38727.chunk.css.map",
+    "static/js/2.d47078a8.chunk.js.LICENSE.txt": "/Post-it-board/static/js/2.d47078a8.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/Post-it-board/static/media/SpoqaHanSansNeo-Thin.4abb192e.ttf"
   },
   "entrypoints": [
-    "static/js/runtime-main.9167ae7a.js",
-    "static/js/2.241739ec.chunk.js",
-    "static/css/main.95fc6349.chunk.css",
-    "static/js/main.f8f480ff.chunk.js"
+    "static/js/runtime-main.999094bc.js",
+    "static/js/2.d47078a8.chunk.js",
+    "static/css/main.83a38727.chunk.css",
+    "static/js/main.27463a1c.chunk.js"
   ]
 }
