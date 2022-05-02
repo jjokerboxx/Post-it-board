@@ -7,6 +7,121 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { useForm } from "react-hook-form";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+  background-color: white;
+  height: 100vh;
+`;
+
+const ButtonMenu = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 400px;
+  gap: 30px;
+`;
+
+const FormDiv = styled.div`
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+const Form = styled.form`
+  margin: 0 auto;
+  width: 100%;
+  max-width: 414px;
+  padding: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
+const Input = styled.input`
+  max-width: 100%;
+  padding: 11px 13px;
+  background: #f9f9fa;
+  color: #f03d4e;
+  margin-bottom: 0.9rem;
+  border-radius: 4px;
+  outline: 0;
+  border: 1px solid rgba(245, 245, 245, 0.7);
+  font-size: 14px;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  :focus,
+  :hover {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
+  }
+`;
+const SubmitButton = styled.button`
+  max-width: 100%;
+  padding: 11px 13px;
+  color: rgb(253, 249, 243);
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #f03d4e;
+  border: none;
+  border-radius: 3px;
+  outline: 0;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-out;
+  :hover {
+    background: rgb(200, 50, 70);
+    animation: 0.2s ease-out forwards;
+  }
+`;
+
+const GoogleButton = styled.button`
+  max-width: 100%;
+  padding: 11px 13px;
+  color: rgb(253, 249, 243);
+  font-weight: 600;
+  text-transform: uppercase;
+  background: grey;
+  border: none;
+  border-radius: 3px;
+  outline: 0;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-out;
+  :hover {
+    background: #3d3b3b;
+    animation: 0.2s ease-out forwards;
+  }
+`;
+
+const AlterButton = styled.button`
+  max-width: 100%;
+  padding: 11px 13px;
+  color: black;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #e8dfdf;
+  border: none;
+  border-radius: 3px;
+  outline: 0;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-out;
+  :hover {
+    background: #303030;
+    color: white;
+    animation: 0.2s ease-out forwards;
+  }
+`;
+
+const Title = styled.h2`
+  text-align: center;
+  font-size: 38px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+`;
 
 function Auth() {
   const [email, setEmail] = useState("");
@@ -72,11 +187,11 @@ function Auth() {
   };
 
   return (
-    <div>
-      <span>사용자 인증</span>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <input
+    <Wrapper>
+      <Title>사용자 인증</Title>
+      <FormDiv>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Input
             {...register("email", {
               required: true,
               onChange: onChange,
@@ -87,8 +202,8 @@ function Auth() {
             placeholder="Email"
             // value={email}
             // onChange={onChange}
-          ></input>
-          <input
+          ></Input>
+          <Input
             {...register("password", {
               required: true,
               onChange: onChange,
@@ -100,24 +215,28 @@ function Auth() {
             // required
             // value={password}
             // onChange={onChange}
-          ></input>
-          <input
-            type="submit"
-            value={newAccount ? "가입하기" : "로그인"}
-          ></input>
-        </form>
-        <div>
-          <button onClick={onGoogleClick}>Goolge로 로그인 하기</button>
-          {/* <button>Github으로 로그인 하기</button> */}
-        </div>
-        <div>
-          <button onClick={toggleAccount}>
-            {newAccount ? "이미 계정이 있어요." : "새롭게 계정을 생성해야해요."}
-          </button>
-        </div>
+          ></Input>
+          <SubmitButton type="submit">
+            {newAccount ? "가입하기" : "로그인"}
+          </SubmitButton>
+        </Form>
+        <ButtonMenu>
+          <div>
+            <GoogleButton onClick={onGoogleClick}>
+              Goolge 로그인 하기
+            </GoogleButton>
+            {/* <button>Github으로 로그인 하기</button> */}
+          </div>
+          <div>
+            <AlterButton onClick={toggleAccount}>
+              {newAccount ? "이미 계정이 있어요" : "새롭게 계정을 생성해야해요"}
+            </AlterButton>
+          </div>
+        </ButtonMenu>
+
         {error}
-      </div>
-    </div>
+      </FormDiv>
+    </Wrapper>
   );
 }
 export default Auth;

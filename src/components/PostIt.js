@@ -1,10 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { firestoreDB } from "firebase";
 import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
+import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { deleteState } from "atoms";
+import { useHistory } from "react-router-dom";
+
+const PostItBox = styled.div`
+  position: relative;
+  word-wrap: "break-word";
+  background-color: ${(props) => props.postObj.color};
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  /* border: "none"; */
+  border-radius: 10px;
+  padding: 10px;
+  margin: 30px;
+  outline-style: none;
+  resize: none;
+  width: 250px;
+  height: 150px;
+`;
 
 const PostIt = ({ postObj, isOwner }) => {
+  const history = useHistory();
+  const [isDeleted, setIsDeleted] = useRecoilState(deleteState);
+
   const deletePost = async () => {
     await deleteDoc(doc(firestoreDB, "Post", postObj.id));
+    setIsDeleted((prev) => !prev);
+    // history.go(0);
     console.log("delete doc", postObj.id);
   };
 
@@ -22,21 +46,7 @@ const PostIt = ({ postObj, isOwner }) => {
   }, ${date.getDate()}, ${date.getFullYear()}`;
   return (
     <>
-      <div
-        style={{
-          position: "relative",
-          wordWrap: "break-word",
-          backgroundColor: postObj.color,
-          border: "none",
-          borderRadius: (20, 20, 10, 10),
-          padding: 10,
-          margin: 30,
-          outlineStyle: "none",
-          resize: "none",
-          width: 250,
-          height: 150,
-        }}
-      >
+      <PostItBox postObj={postObj}>
         {isOwner && (
           <>
             <div>
@@ -79,7 +89,7 @@ const PostIt = ({ postObj, isOwner }) => {
             </button>
           </div>
         </>
-      </div>
+      </PostItBox>
     </>
   );
 };

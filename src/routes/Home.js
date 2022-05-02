@@ -11,18 +11,40 @@ import PostIt from "../components/PostIt";
 import "../styles/App.css";
 import styled from "styled-components";
 import PostItModal from "components/PostItModal";
+import { useRecoilState } from "recoil";
+import { writeOpenState } from "atoms";
 
 const PostGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 `;
 
+const WriteButton = styled.button`
+  cursor: pointer;
+  width: 100px;
+  border: none;
+  color: white;
+  background-color: orange;
+  padding: 5px;
+  font-size: 15px;
+  border-radius: 10px;
+  margin: 10px;
+  font-family: "SpoqaHanSansNeo";
+`;
+
+const ButtonMenu = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 300px;
+`;
+
 const Home = ({ userObj }) => {
   const [post, setPost] = useState("");
   const [postArry, setPostArry] = useState([]);
   const [isSorted, setIsSorted] = useState(false);
-  const [isModalOn, setIsModalOn] = useState(false);
-  // 3) isSorted를 true || false로 교체
+  const [isModalOn, setIsModalOn] = useRecoilState(writeOpenState);
+
   const onSortClick = () => {
     setIsSorted((prev) => !prev);
     console.log(isSorted);
@@ -81,12 +103,13 @@ const Home = ({ userObj }) => {
   // 렌더링
   return (
     <>
-      <button className="defaultButton" onClick={onSortClick}>
-        Sort by {isSorted ? "Time" : "Like"}
-      </button>
-      <button className="write" onClick={onWriteClick}>
-        새로운 포스트잇 작성하기!
-      </button>
+      <ButtonMenu>
+        <button className="defaultButton" onClick={onSortClick}>
+          Sort by {isSorted ? "Time" : "Like"}
+        </button>
+        <WriteButton onClick={onWriteClick}>새 글 작성하기</WriteButton>
+      </ButtonMenu>
+
       <div className="flexContainer">
         {isModalOn && <PostItModal userObj={userObj} />}
         <PostGrid>

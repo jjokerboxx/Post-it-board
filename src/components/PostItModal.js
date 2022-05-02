@@ -1,12 +1,49 @@
 import { firestoreDB } from "firebase";
+import {
+  AnimatePresence,
+  motion,
+  MotionValue,
+  useViewportScroll,
+  Variants,
+} from "framer-motion";
 import { collection, addDoc } from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
 import ColorPalette from "./ColorPalette";
+import styled from "styled-components";
+import { writeOpenState } from "atoms";
+import { useRecoilState } from "recoil";
+
+const Overlay = styled(motion.div)`
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+`;
+
+const Modal = styled(motion.div)`
+  z-index: 1001;
+  border-radius: 15px !important;
+  overflow: auto !important;
+  top: ${(props) => props.scrollY.get() + 100}px;
+  position: absolute;
+  width: 800px;
+
+  height: 60%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: white;
+`;
+
 function PostItModal({ userObj }) {
   // 0) 상태 모음
   const [post, setPost] = useState("");
   const [postArry, setPostArry] = useState([]);
   const [isSorted, setIsSorted] = useState(false);
+  const [isModalOn, setIsModalOn] = useRecoilState(writeOpenState);
 
   // 1) 텍스트입력 감지 후 입력값(value)을 [post]로 올리기
   const onChange = (e) => {
@@ -33,34 +70,50 @@ function PostItModal({ userObj }) {
     // 입력칸 비우기
     document.querySelector(".post").value = "";
     setPost("");
+    setIsModalOn(false);
   };
+  const onOverlayClick = () => {
+    setIsModalOn((prev) => !prev);
+  };
+  const { scrollY } = useViewportScroll();
   return (
-    <div style={{ flex: 1, margin: 30 }}>
-      <form className="postForm">
-        <div className="postIt" style={{ backgroundColor: "#ffd359" }}>
-          <textarea
-            style={{ marginTop: "10px" }}
-            className="post"
-            cols={30}
-            rows={7}
-            value={post}
-            onChange={onChange}
-            placeholder="What's on your mind?"
-            maxLength={140}
-          ></textarea>
-          <div className="colorPalette">
-            {["#ffd359", "#e2ff3d", "#ff8547", "#44ccff", "#ff8adc"].map(
-              (e) => (
-                <ColorPalette color={e} />
-              )
-            )}
+    <>
+      <AnimatePresence>
+        <Overlay
+          onClick={onOverlayClick}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        />
+        <Modal scrollY={scrollY}>
+          <div style={{ flex: 1, marginTop: 70 }}>
+            <form className="postForm">
+              <div className="postIt" style={{ backgroundColor: "#ffd359" }}>
+                <textarea
+                  style={{ marginTop: "10px" }}
+                  className="post"
+                  cols={30}
+                  rows={7}
+                  value={post}
+                  onChange={onChange}
+                  placeholder="What's on your mind?"
+                  maxLength={140}
+                ></textarea>
+                <div className="colorPalette">
+                  {["#ffd359", "#e2ff3d", "#ff8547", "#44ccff", "#ff8adc"].map(
+                    (e) => (
+                      <ColorPalette color={e} />
+                    )
+                  )}
+                </div>
+              </div>
+              <button className="defaultButton" onClick={onSubmit}>
+                Post!
+              </button>
+            </form>
           </div>
-        </div>
-        <button className="defaultButton" onClick={onSubmit}>
-          Post!
-        </button>
-      </form>
-    </div>
+        </Modal>
+      </AnimatePresence>
+    </>
   );
 }
 
