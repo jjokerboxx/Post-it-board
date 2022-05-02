@@ -8,7 +8,7 @@ import Navigation from "./components/Navigation";
 const AppRouter = ({ isLoggedin, userObj }) => {
   console.log(isLoggedin ? "Logged in" : "Not logged in");
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router>
       {isLoggedin && <Navigation />}
       <Switch>
         {/* 로그인 정보를 받아서 null이 아니면 Auth 화면으로 처리해줌 */}
