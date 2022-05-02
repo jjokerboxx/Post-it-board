@@ -1,21 +1,21 @@
 {
   "files": {
     "main.css": "/Post-it-board/static/css/main.83a38727.chunk.css",
-    "main.js": "/Post-it-board/static/js/main.27463a1c.chunk.js",
-    "main.js.map": "/Post-it-board/static/js/main.27463a1c.chunk.js.map",
+    "main.js": "/Post-it-board/static/js/main.c818d9ca.chunk.js",
+    "main.js.map": "/Post-it-board/static/js/main.c818d9ca.chunk.js.map",
     "runtime-main.js": "/Post-it-board/static/js/runtime-main.999094bc.js",
     "runtime-main.js.map": "/Post-it-board/static/js/runtime-main.999094bc.js.map",
-    "static/js/2.d47078a8.chunk.js": "/Post-it-board/static/js/2.d47078a8.chunk.js",
-    "static/js/2.d47078a8.chunk.js.map": "/Post-it-board/static/js/2.d47078a8.chunk.js.map",
+    "static/js/2.390fea72.chunk.js": "/Post-it-board/static/js/2.390fea72.chunk.js",
+    "static/js/2.390fea72.chunk.js.map": "/Post-it-board/static/js/2.390fea72.chunk.js.map",
     "index.html": "/Post-it-board/index.html",
     "static/css/main.83a38727.chunk.css.map": "/Post-it-board/static/css/main.83a38727.chunk.css.map",
-    "static/js/2.d47078a8.chunk.js.LICENSE.txt": "/Post-it-board/static/js/2.d47078a8.chunk.js.LICENSE.txt",
+    "static/js/2.390fea72.chunk.js.LICENSE.txt": "/Post-it-board/static/js/2.390fea72.chunk.js.LICENSE.txt",
     "static/media/App.css": "/Post-it-board/static/media/SpoqaHanSansNeo-Thin.4abb192e.ttf"
   },
   "entrypoints": [
     "static/js/runtime-main.999094bc.js",
-    "static/js/2.d47078a8.chunk.js",
+    "static/js/2.390fea72.chunk.js",
     "static/css/main.83a38727.chunk.css",
-    "static/js/main.27463a1c.chunk.js"
+    "static/js/main.c818d9ca.chunk.js"
   ]
 }
