@@ -84,7 +84,7 @@ function PostItModal({ userObj }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
-        <Modal scrollY={scrollY}>
+        <Modal animate={{ opacity: 1 }} exit={{ opacity: 0 }} scrollY={scrollY}>
           <div style={{ flex: 1, marginTop: 70 }}>
             <form className="postForm">
               <div className="postIt" style={{ backgroundColor: "#ffd359" }}>

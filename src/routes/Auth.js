@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { authService } from "firebase";
+import { authService, firestoreDB } from "firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,6 +8,9 @@ import {
 } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { useRecoilState, useRecoilStoreID } from "recoil";
+import { userState } from "atoms";
 
 const Wrapper = styled.div`
   background-color: white;
@@ -126,15 +129,16 @@ const Title = styled.h2`
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
   const [newAccount, setNewAccout] = useState(true);
   const [error, setError] = useState("");
+  const [userInfoState, setUserInfoState] = useRecoilState(userState);
 
   const toggleAccount = () => setNewAccout((prev) => !prev);
 
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data, e) => {
-    console.log(data);
     e.preventDefault();
     try {
       let authData;
@@ -143,6 +147,19 @@ function Auth() {
           authService,
           email,
           password
+        );
+        // console.log(authData);
+
+        // set User iInformation field
+        const userInfo = {
+          id: authData.user.uid,
+          nickname: data.nickname,
+          createdAt: Date.now(),
+          likePost: [],
+        };
+        const docRef = await setDoc(
+          doc(firestoreDB, "UserInfo", userInfo.id),
+          userInfo
         );
       } else {
         authData = await signInWithEmailAndPassword(
@@ -200,8 +217,6 @@ function Auth() {
             type="email"
             id="id"
             placeholder="Email"
-            // value={email}
-            // onChange={onChange}
           ></Input>
           <Input
             {...register("password", {
@@ -212,10 +227,19 @@ function Auth() {
             type="text"
             id="pw"
             placeholder="Password"
-            // required
-            // value={password}
-            // onChange={onChange}
           ></Input>
+          {newAccount && (
+            <Input
+              {...register("nickname", {
+                required: true,
+                onChange: onChange,
+                value: nickname,
+              })}
+              type="text"
+              id="nickname"
+              placeholder="Nickname"
+            ></Input>
+          )}
           <SubmitButton type="submit">
             {newAccount ? "가입하기" : "로그인"}
           </SubmitButton>

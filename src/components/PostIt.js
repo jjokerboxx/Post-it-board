@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { firestoreDB } from "firebase";
-import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "@firebase/firestore";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { deleteState } from "atoms";
@@ -21,9 +28,11 @@ const PostItBox = styled.div`
   height: 150px;
 `;
 
-const PostIt = ({ postObj, isOwner }) => {
+const PostIt = ({ postObj, isOwner, uid, isLikedbyCurrentUser }) => {
   const history = useHistory();
   const [isDeleted, setIsDeleted] = useRecoilState(deleteState);
+
+  const [isLiked, setIsLiked] = useState(isLikedbyCurrentUser);
 
   const deletePost = async () => {
     await deleteDoc(doc(firestoreDB, "Post", postObj.id));
@@ -32,12 +41,22 @@ const PostIt = ({ postObj, isOwner }) => {
     console.log("delete doc", postObj.id);
   };
 
+  // 도대체 왜 매 포스트잇마다 현재 유저를 불러와야함? ===> 코드 수정하기
+
   const likePost = async () => {
-    const postDoc = doc(firestoreDB, "Post", postObj.id);
+    const userInfo = await doc(firestoreDB, "UserInfo", uid);
+    console.log(userInfo);
+
+    const postDoc = await doc(firestoreDB, "Post", postObj.id);
+
     await updateDoc(postDoc, {
-      like: postObj.like + 1,
+      like: isLiked ? postObj.like - 1 : postObj.like + 1,
     });
-    console.log("like doc", postObj.id);
+    await updateDoc(userInfo, {
+      likePost: isLiked ? arrayRemove(postObj.id) : arrayUnion(postObj.id),
+    });
+    console.log(isLiked ? "like post" : "unlike post");
+    setIsLiked((prev) => !prev);
   };
 
   const date = new Date(postObj.uploadedAt);

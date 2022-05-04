@@ -6,7 +6,6 @@ import Auth from "./routes/Auth";
 import Navigation from "./components/Navigation";
 
 const AppRouter = ({ isLoggedin, userObj }) => {
-  console.log(isLoggedin ? "Logged in" : "Not logged in");
   return (
     <Router>
       {isLoggedin && <Navigation />}

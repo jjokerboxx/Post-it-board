@@ -5,6 +5,7 @@ import {
   onSnapshot,
   query,
   orderBy,
+  where,
 } from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
 import PostIt from "../components/PostIt";
@@ -12,7 +13,7 @@ import "../styles/App.css";
 import styled from "styled-components";
 import PostItModal from "components/PostItModal";
 import { useRecoilState } from "recoil";
-import { writeOpenState } from "atoms";
+import { likedPostIdArr, userState, writeOpenState } from "atoms";
 
 const PostGrid = styled.div`
   display: grid;
@@ -40,10 +41,12 @@ const ButtonMenu = styled.div`
 `;
 
 const Home = ({ userObj }) => {
-  const [post, setPost] = useState("");
   const [postArry, setPostArry] = useState([]);
+  // const [likedPostId, setLikedPostId] = useRecoilState(likedPostIdArr);
+  const [likedPostId, setLikedPostId] = useState([]);
   const [isSorted, setIsSorted] = useState(false);
   const [isModalOn, setIsModalOn] = useRecoilState(writeOpenState);
+  const [userInfoState, setUserInfoState] = useRecoilState(userState);
 
   const onSortClick = () => {
     setIsSorted((prev) => !prev);
@@ -53,18 +56,32 @@ const Home = ({ userObj }) => {
     setIsModalOn((prev) => !prev);
   };
 
+  // 현재 사용자의 좋아요 목록 api 콜
+  useEffect(() => {
+    const qu = query(
+      collection(firestoreDB, "UserInfo"),
+      where("id", "==", userObj.uid)
+    );
+    const userSnapshot = onSnapshot(qu, (snapshot) => {
+      const userInfoArry = snapshot.docs.map((elem) => ({
+        ...elem.data(),
+      }));
+      const { likePost } = userInfoArry[0];
+      const { nickname } = userInfoArry[0];
+      setLikedPostId(likePost);
+      setUserInfoState({ id: userObj.uid, nickname: nickname });
+    });
+  }, []);
+
   // 4) 실시간 snapshot 렌더링
   useEffect(() => {
     // 정렬 기준
     const sortOrder = "uploadedAt";
-    console.log(sortOrder);
     // 쿼리문 생성
     const q = query(
       collection(firestoreDB, "Post"),
-      // ++만약 좋아요가 같으면 uploadedAt 순으로 정렬 기능 추가
       orderBy(sortOrder, "desc")
     );
-    // onSnapshot으로 [postArry] 설정
     const postSnapshot = onSnapshot(q, (snapshot) => {
       const docArry = snapshot.docs.map((elem) => ({
         id: elem.id,
@@ -72,35 +89,8 @@ const Home = ({ userObj }) => {
       }));
       setPostArry(docArry);
     });
-    console.log("isSorted", isSorted);
-    // deps로 isSorted 받기
   }, [isSorted]);
 
-  useEffect(() => {
-    // 차트 인 애니메이션
-  }, []);
-  // const postGetter = async () => {
-  // 	// 정렬 기준
-  // 	const sortOrder = isSorted ? "like" : "uploadedAt";
-  // 	console.log(sortOrder);
-  // 	// 쿼리문 생성
-  // 	const q = query(
-  // 		collection(firestoreDB, "Post"),
-  // 		// ++만약 좋아요가 같으면 uploadedAt 순으로 정렬 기능 추가
-  // 		orderBy(sortOrder, "desc")
-  // 	);
-  // 	// onSnapshot으로 [postArry] 설정
-  // 	const postDocs = await getDocs(q);
-  // 	postDocs.forEach((post) => {
-  // 		setPostArry((prev) => [post.data(), ...prev]);
-  // 	});
-  // };
-  // useEffect(() => {
-  // 	// deps로 isSorted 받기
-  // 	postGetter();
-  // }, [isSorted]);
-
-  // 렌더링
   return (
     <>
       <ButtonMenu>
@@ -126,6 +116,8 @@ const Home = ({ userObj }) => {
                 key={element.id}
                 postObj={element}
                 isOwner={userObj.uid === element.author}
+                uid={userObj.uid}
+                isLikedbyCurrentUser={likedPostId.includes(element.id)}
               />
             ))}
         </PostGrid>
