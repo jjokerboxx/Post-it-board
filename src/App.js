@@ -1,8 +1,6 @@
 import AppRouter from "AppRouter";
 import React, { useState, useEffect } from "react";
-import { authService } from "firebase";
-import { useRecoilState } from "recoil";
-import { userIdState } from "atoms";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function App() {
   const [init, setInit] = useState(false);
@@ -11,15 +9,18 @@ function App() {
   // const [userId, setUserId] = useRecoilState(userIdState);
 
   useEffect(() => {
-    authService.onAuthStateChanged((user) => {
+    let auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log("settimeout login", user);
         setLoggedin(true);
         setUserObj(user);
-        // setUserId(user.uid);
+        console.log(init, user);
+        setInit(true);
       } else {
         setLoggedin(false);
+        setInit(true);
       }
-      setInit(true);
     });
   }, []);
 

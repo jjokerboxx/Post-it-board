@@ -17,7 +17,7 @@ import { likedPostIdArr, userState, writeOpenState } from "atoms";
 
 const PostGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(${(props) => props.widthoffset}, 1fr);
 `;
 
 const WriteButton = styled.button`
@@ -41,6 +41,7 @@ const ButtonMenu = styled.div`
 `;
 
 const Home = ({ userObj }) => {
+  let [offset, setOffset] = useState(4);
   const [postArry, setPostArry] = useState([]);
   // const [likedPostId, setLikedPostId] = useRecoilState(likedPostIdArr);
   const [likedPostId, setLikedPostId] = useState([]);
@@ -56,21 +57,43 @@ const Home = ({ userObj }) => {
     setIsModalOn((prev) => !prev);
   };
 
-  // 현재 사용자의 좋아요 목록 api 콜
   useEffect(() => {
-    const qu = query(
-      collection(firestoreDB, "UserInfo"),
-      where("id", "==", userObj.uid)
-    );
-    const userSnapshot = onSnapshot(qu, (snapshot) => {
-      const userInfoArry = snapshot.docs.map((elem) => ({
-        ...elem.data(),
-      }));
-      const { likePost } = userInfoArry[0];
-      const { nickname } = userInfoArry[0];
-      setLikedPostId(likePost);
-      setUserInfoState({ id: userObj.uid, nickname: nickname });
-    });
+    try {
+      const qu = query(
+        collection(firestoreDB, "UserInfo"),
+        where("id", "==", userObj.uid)
+      );
+      const userSnapshot = onSnapshot(qu, (snapshot) => {
+        const userInfoArry = snapshot.docs.map((elem) => ({
+          ...elem.data(),
+        }));
+        const { likePost } = userInfoArry[0];
+        const { nickname } = userInfoArry[0];
+        setLikedPostId(likePost);
+        setUserInfoState({ id: userObj.uid, nickname: nickname });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const setResponsiveOffset = () => {
+      if (window.innerWidth < 600) {
+        setOffset(1);
+      } else if (window.innerWidth <= 800) {
+        setOffset(2);
+      } else if (window.innerWidth < 1000) {
+        setOffset(3);
+      } else if (window.innerWidth > 1200) {
+        setOffset(4);
+      }
+    };
+    // resize 이벤트 리스너 추가해서 실시간으로 반응형 웹 만들기
+    window.addEventListener("resize", setResponsiveOffset);
+
+    // 항상 이벤트 리스너를 리턴해서 메모리 누수를 막아야한다.
+    return () => window.removeEventListener("resize", setResponsiveOffset);
   }, []);
 
   // 4) 실시간 snapshot 렌더링
@@ -102,7 +125,7 @@ const Home = ({ userObj }) => {
 
       <div className="flexContainer">
         {isModalOn && <PostItModal userObj={userObj} />}
-        <PostGrid>
+        <PostGrid widthoffset={offset}>
           {postArry
             .sort((a, b) => {
               if (isSorted) {

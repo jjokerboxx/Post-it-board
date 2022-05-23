@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { authService, firestoreDB } from "firebase";
 import {
   createUserWithEmailAndPassword,
@@ -8,9 +8,7 @@ import {
 } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { useRecoilState, useRecoilStoreID } from "recoil";
-import { userState } from "atoms";
+import { doc, setDoc } from "firebase/firestore";
 
 const Wrapper = styled.div`
   background-color: white;
@@ -132,7 +130,7 @@ function Auth() {
   const [nickname, setNickname] = useState("");
   const [newAccount, setNewAccout] = useState(true);
   const [error, setError] = useState("");
-  const [userInfoState, setUserInfoState] = useRecoilState(userState);
+  // const [userInfoState, setUserInfoState] = useRecoilState(userState);
 
   const toggleAccount = () => setNewAccout((prev) => !prev);
 
@@ -178,9 +176,22 @@ function Auth() {
     try {
       const result = await signInWithPopup(authService, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
+      console.log(credential);
       const token = credential.accessToken;
       // The signed-in user info.
       const user = result.user;
+
+      // set User iInformation field
+      const userInfo = {
+        id: user.uid,
+        nickname: "Google_login_nickname",
+        createdAt: Date.now(),
+        likePost: [],
+      };
+      const docRef = await setDoc(
+        doc(firestoreDB, "UserInfo", userInfo.id),
+        userInfo
+      );
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -190,6 +201,10 @@ function Auth() {
       const credential = GoogleAuthProvider.credentialFromError(error);
     }
   };
+
+  useEffect(() => {
+    //localStorage로 로그인 관리하기?
+  }, []);
 
   const onChange = (e) => {
     //destructring event
@@ -257,7 +272,6 @@ function Auth() {
             </AlterButton>
           </div>
         </ButtonMenu>
-
         {error}
       </FormDiv>
     </Wrapper>
