@@ -29,14 +29,30 @@ const Modal = styled(motion.div)`
   overflow: auto !important;
   top: ${(props) => props.scrollY.get() + 100}px;
   position: absolute;
-  width: 800px;
 
+  // mobile edia-query 적용하기
+  width: 800px;
   height: 60%;
   left: 0;
   right: 0;
   margin: 0 auto;
   background-color: white;
 `;
+const modalVariants = {
+  enter: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+  exit: {
+    scale: 0,
+    opacity: 0,
+    transition: {
+      duration: 0.8,
+    },
+  },
+};
 
 function PostItModal({ userObj }) {
   // 0) 상태 모음
@@ -84,7 +100,12 @@ function PostItModal({ userObj }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
-        <Modal animate={{ opacity: 1 }} exit={{ opacity: 0 }} scrollY={scrollY}>
+        <Modal
+          variants={modalVariants}
+          exit="exit"
+          scrollY={scrollY}
+          layoutId={"PostitModal"}
+        >
           <div style={{ flex: 1, marginTop: 70 }}>
             <form className="postForm">
               <div className="postIt" style={{ backgroundColor: "#ffd359" }}>

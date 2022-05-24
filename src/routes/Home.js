@@ -10,16 +10,27 @@ import {
 import React, { useState, useEffect } from "react";
 import PostIt from "../components/PostIt";
 import "../styles/App.css";
+import { motion, Variants } from "framer-motion";
 import styled from "styled-components";
 import PostItModal from "components/PostItModal";
 import { useRecoilState } from "recoil";
 import { likedPostIdArr, userState, writeOpenState } from "atoms";
+import { AnimatePresence } from "framer-motion";
 
 const PostGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(${(props) => props.widthoffset}, 1fr);
 `;
-
+const Shade = styled(motion.div)`
+  z-index: -999;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+`;
 const WriteButton = styled.button`
   cursor: pointer;
   width: 100px;
@@ -41,7 +52,7 @@ const ButtonMenu = styled.div`
 `;
 
 const Home = ({ userObj }) => {
-  let [offset, setOffset] = useState(4);
+  let [offset, setOffset] = useState(0);
   const [postArry, setPostArry] = useState([]);
   // const [likedPostId, setLikedPostId] = useRecoilState(likedPostIdArr);
   const [likedPostId, setLikedPostId] = useState([]);
@@ -78,12 +89,21 @@ const Home = ({ userObj }) => {
   }, []);
 
   useEffect(() => {
+    if (window.innerWidth < 600) {
+      setOffset(1);
+    } else if (window.innerWidth <= 930) {
+      setOffset(2);
+    } else if (window.innerWidth < 1200) {
+      setOffset(3);
+    } else if (window.innerWidth > 1200) {
+      setOffset(4);
+    }
     const setResponsiveOffset = () => {
       if (window.innerWidth < 600) {
         setOffset(1);
-      } else if (window.innerWidth <= 800) {
+      } else if (window.innerWidth <= 930) {
         setOffset(2);
-      } else if (window.innerWidth < 1000) {
+      } else if (window.innerWidth < 1200) {
         setOffset(3);
       } else if (window.innerWidth > 1200) {
         setOffset(4);
@@ -116,35 +136,57 @@ const Home = ({ userObj }) => {
 
   return (
     <>
-      <ButtonMenu>
-        <button className="defaultButton" onClick={onSortClick}>
-          Sort by {isSorted ? "Time" : "Like"}
-        </button>
-        <WriteButton onClick={onWriteClick}>새 글 작성하기</WriteButton>
-      </ButtonMenu>
+      <AnimatePresence>
+        <ButtonMenu>
+          <button className="defaultButton" onClick={onSortClick}>
+            Sort by {isSorted ? "Time" : "Like"}
+          </button>
+          <WriteButton onClick={onWriteClick}>새 글 작성하기</WriteButton>
+        </ButtonMenu>
 
-      <div className="flexContainer">
-        {isModalOn && <PostItModal userObj={userObj} />}
-        <PostGrid widthoffset={offset}>
-          {postArry
-            .sort((a, b) => {
-              if (isSorted) {
-                return b.like - a.like;
-              } else {
-                return b.uploadedAt - a.uploadedAt;
-              }
-            })
-            .map((element) => (
-              <PostIt
-                key={element.id}
-                postObj={element}
-                isOwner={userObj.uid === element.author}
-                uid={userObj.uid}
-                isLikedbyCurrentUser={likedPostId.includes(element.id)}
-              />
-            ))}
-        </PostGrid>
-      </div>
+        <div className="flexContainer">
+          {/* <Shade
+            layoutId="PostitModal"
+          /> */}
+
+          {isModalOn && <PostItModal userObj={userObj} />}
+
+          <PostGrid widthoffset={offset}>
+            {postArry
+              .sort((a, b) => {
+                if (isSorted) {
+                  return b.like - a.like;
+                } else {
+                  return b.uploadedAt - a.uploadedAt;
+                }
+              })
+              .map((element, idx) => {
+                if (idx == 0) {
+                  return (
+                    <PostIt
+                      key={element.id}
+                      postObj={element}
+                      isOwner={userObj.uid === element.author}
+                      uid={userObj.uid}
+                      isLikedbyCurrentUser={likedPostId.includes(element.id)}
+                      layoutId="PostitModal"
+                    />
+                  );
+                } else {
+                  return (
+                    <PostIt
+                      key={element.id}
+                      postObj={element}
+                      isOwner={userObj.uid === element.author}
+                      uid={userObj.uid}
+                      isLikedbyCurrentUser={likedPostId.includes(element.id)}
+                    />
+                  );
+                }
+              })}
+          </PostGrid>
+        </div>
+      </AnimatePresence>
     </>
   );
 };

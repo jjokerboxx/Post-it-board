@@ -11,7 +11,6 @@ import {
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { deleteState } from "atoms";
-import { useHistory } from "react-router-dom";
 
 const PostItBox = styled.div`
   position: relative;
@@ -28,8 +27,8 @@ const PostItBox = styled.div`
   height: 150px;
 `;
 
+// TODO: layoutId 입력하기
 const PostIt = ({ postObj, isOwner, uid, isLikedbyCurrentUser }) => {
-  const history = useHistory();
   const [isDeleted, setIsDeleted] = useRecoilState(deleteState);
 
   const [isLiked, setIsLiked] = useState(isLikedbyCurrentUser);
@@ -37,16 +36,12 @@ const PostIt = ({ postObj, isOwner, uid, isLikedbyCurrentUser }) => {
   const deletePost = async () => {
     await deleteDoc(doc(firestoreDB, "Post", postObj.id));
     setIsDeleted((prev) => !prev);
-    // history.go(0);
-    console.log("delete doc", postObj.id);
   };
 
   // 도대체 왜 매 포스트잇마다 현재 유저를 불러와야함? ===> 코드 수정하기
 
   const likePost = async () => {
     const userInfo = await doc(firestoreDB, "UserInfo", uid);
-    console.log(userInfo);
-
     const postDoc = await doc(firestoreDB, "Post", postObj.id);
 
     await updateDoc(postDoc, {
@@ -55,7 +50,7 @@ const PostIt = ({ postObj, isOwner, uid, isLikedbyCurrentUser }) => {
     await updateDoc(userInfo, {
       likePost: isLiked ? arrayRemove(postObj.id) : arrayUnion(postObj.id),
     });
-    console.log(isLiked ? "like post" : "unlike post");
+
     setIsLiked((prev) => !prev);
   };
 
